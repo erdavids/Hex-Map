@@ -28,23 +28,24 @@ def draw_hexagon(x, y, side, h):
 def setup():
     size(w, h)
     strokeWeight(line_width)
+    pixelDensity(2)
+    
     
     stroke(0, 0, 0)
    
     colorMode(HSB, 360, 40, 40);
          
-    for i in range(25):
+    for i in range(70):
         y = i * ((.86 * hexagon_side))
-        for j in range(10):
+        for j in range(100):
             if (i%2 == 0):
                 x = j * (hexagon_side * 3)
             else:
                 x = (hexagon_side * 1.5) + j * (hexagon_side * 3)
             
-            n = int(noise(x * noise_scale, y * noise_scale) * 100 / 2)
-            print(n)
+            n = int(noise((x / 4) * noise_scale, (y / 4) * noise_scale) * 100)
             for l in range(n):
-                fill(noise(x * noise_scale, y * noise_scale) * 360, 70, 70)
+                #fill(noise(x * noise_scale, y * noise_scale) * 360, 70, 70)
                 draw_hexagon(x, y - l, hexagon_side, 0)
 
 
