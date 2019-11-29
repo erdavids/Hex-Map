@@ -1,10 +1,10 @@
-imgw, imgh = 1000, 1000
+imgw, imgh = 2000, 2000
 
 
 #############
 # Change the tile style
 #############
-hexagon_size = 3
+hexagon_size = 10
 outline_width = 1
 outline_color = (0, 0, 0)
 
@@ -13,23 +13,23 @@ outline_color = (0, 0, 0)
 #############
 noise_loc_mod = 4
 noise_scale = .02
-noise_max = 75
-max_distance = 600
+noise_max = 120
+max_distance = 1100
 
 #############
 # Map Variables
 #############
-flat_map = True
-dark_water_range = (0, 30)
-water_range = (30, 35)
-sand_range = (water_range[1], 40)
-grass_range = (sand_range[1], 60)
-dark_grass_range = (grass_range[1], 70)
-rocky_range = (dark_grass_range[1], 71)
+flat_map = False
+dark_water_range = (0, 10)
+water_range = (11, 20)
+sand_range = (water_range[1], 25)
+grass_range = (sand_range[1], 40)
+dark_grass_range = (grass_range[1], 60)
+rocky_range = (dark_grass_range[1], 70)
 snowy_range = (rocky_range[1], noise_max)
 
-
-draw_everything = True
+# Set this to false when doing a raised map for best results
+draw_everything = False
 
 
 
@@ -69,14 +69,6 @@ def draw_hexagon(x, y, side, h):
     vertex((x + side * sin(PI/6), y + side * cos(PI/6) - h))
     endShape()
     
-
-
-    
-    # for v in range(len(verts) - 1):
-    #     line(verts[v][0], verts[v][1], verts[v+1][0], verts[v+1][1])
-    
-    # line(verts[len(verts) - 1][0], verts[len(verts) - 1][1], verts[0][0], verts[0][1])
-
 def in_range(n, r):
     if (n >= r[0] and n < r[1]):
         return True
@@ -99,6 +91,7 @@ def get_tile_type(n):
     else:
         return 'dark_water'
 
+# Returns the distance between tiles
 def get_distance(tile_one_x, tile_one_y, tile_two_x, tile_two_y):
     return sqrt(pow((tile_one_x - tile_two_x), 2) + pow((tile_one_y - tile_two_y), 2))
     
@@ -110,6 +103,9 @@ def setup():
     size(imgw, imgh)
     background(120, 120, 225)
     
+    # Adjust the settings for the noise function
+    # noiseDetail(5)
+    
     # Take advantage of resolution
     pixelDensity(2)
     
@@ -119,6 +115,7 @@ def setup():
         strokeWeight(outline_width)
     else:
         noStroke()
+
     
     # Create the empty map for hex tiles
     map_height = int(1.5 * imgh / (.86 * hexagon_size))
@@ -183,14 +180,7 @@ def setup():
                 draw_hexagon(c[0], c[1], hexagon_size, noise_height )
     
     
+    seed = str(int(random(10000)))
     
-    # Writing data to file (Map data, stats, seed, etc)?
-    # output = createWriter("Data/map.txt")
-    # for mc in hex_map:
-    #     output.print(mc) # Write the datum to the file
-    # output.flush()# Writes the remaining data to the file
-    # output.close()# Finishes the file
-    seed = str(int(random(1000)))
-    
-    save('Examples/Junk/' + seed + '.png')
+    save('Examples/Best/' + seed + '.png')
     
