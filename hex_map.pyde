@@ -1,13 +1,39 @@
 imgw, imgh = 1000, 1000
 
-hexagon_side = 20
-noise_scale = .05
 
-line_width = 1
+#############
+# Change the tile style
+#############
+hexagon_size = 3
+outline_width = 1
+outline_color = (0, 0, 0)
+
+#############
+# Noise Variables
+#############
+noise_loc_mod = 4
+noise_scale = .02
+noise_max = 75
+max_distance = 600
+
+#############
+# Map Variables
+#############
+flat_map = True
+dark_water_range = (0, 30)
+water_range = (30, 35)
+sand_range = (water_range[1], 40)
+grass_range = (sand_range[1], 60)
+dark_grass_range = (grass_range[1], 70)
+rocky_range = (dark_grass_range[1], 71)
+snowy_range = (rocky_range[1], noise_max)
+
+
+draw_everything = True
+
 
 
 def draw_hexagon(x, y, side, h):
-    point(x, y)
     
     # Top Face
     beginShape()
@@ -18,9 +44,7 @@ def draw_hexagon(x, y, side, h):
     vertex((x + side * sin(7 * PI/6), y + side * cos(7 * PI/6) - h))
     vertex((x + side * sin(5 * PI/6), y + side * cos(5 * PI/6) - h))
     endShape(CLOSE)
-    
-    fill(0, 0, 0)
-    
+
     # Bottom Left Face
     beginShape()
     vertex((x + side * sin(3 * PI/2), y + side * cos(3 * PI/2) - h))
@@ -28,6 +52,7 @@ def draw_hexagon(x, y, side, h):
     vertex((x + side * sin(11 * PI/6), y + side * cos(11 * PI/6) + h))
     vertex((x + side * sin(11 * PI/6), y + side * cos(11 * PI/6) - h))
     endShape()
+
     # Bottom Front Face
     beginShape()
     vertex((x + side * sin(PI/6), y + side * cos(PI/6) - h))
@@ -35,7 +60,7 @@ def draw_hexagon(x, y, side, h):
     vertex((x + side * sin(11 * PI/6), y + side * cos(11 * PI/6) + h))
     vertex((x + side * sin(11 * PI/6), y + side * cos(11 * PI/6) - h))
     endShape()
-    
+
     # Bottom Right Face
     beginShape()
     vertex((x + side * sin(PI/2), y + side * cos(PI/2) - h))
@@ -52,45 +77,120 @@ def draw_hexagon(x, y, side, h):
     
     # line(verts[len(verts) - 1][0], verts[len(verts) - 1][1], verts[0][0], verts[0][1])
 
+def in_range(n, r):
+    if (n >= r[0] and n < r[1]):
+        return True
+    return False
+
+# Set tile types based on noise height
+def get_tile_type(n):
+    if (in_range(n, water_range)):
+        return 'water'
+    elif (in_range(n, sand_range)):
+        return 'sand'
+    elif (in_range(n, grass_range)):
+        return 'grass'
+    elif (in_range(n, dark_grass_range)):
+        return 'dark_grass'
+    elif(in_range(n, rocky_range)):
+        return 'rocky'
+    elif(in_range(n, snowy_range)):
+        return 'snowy'
+    else:
+        return 'dark_water'
+
+def get_distance(tile_one_x, tile_one_y, tile_two_x, tile_two_y):
+    return sqrt(pow((tile_one_x - tile_two_x), 2) + pow((tile_one_y - tile_two_y), 2))
+    
+    
+    
 def setup():
+    
+    # Create the canvas
     size(imgw, imgh)
-    strokeWeight(line_width)
+    background(120, 120, 225)
+    
+    # Take advantage of resolution
     pixelDensity(2)
     
+    # Set the border for the hexagon tiles
+    if (outline_width > 0):
+        stroke(outline_color[0], outline_color[1], outline_color[2])
+        strokeWeight(outline_width)
+    else:
+        noStroke()
     
-    stroke(0, 0, 0)
-
-    fill(200, 60, 60)
-    
-    map_height = int(1.5 * imgh / (.86 * hexagon_side))
-    map_width =  int(1.5 * imgw / (hexagon_side * 3))
+    # Create the empty map for hex tiles
+    map_height = int(1.5 * imgh / (.86 * hexagon_size))
+    map_width =  int(1.5 * imgw / (hexagon_size * 3))
     
     hex_map = []
     for mh in range(map_height):
         hex_map.append([])
     
+    # Assign each tile's position, height, and type
     for i in range(map_height):
-        y = i * ((.86 * hexagon_side))
+        y = i * ((.86 * hexagon_size))
         for j in range(map_width):
             if (i%2 == 0):
-                x = j * (hexagon_side * 3)
+                x = j * (hexagon_size * 3)
             else:
-                x = (hexagon_side * 1.5) + j * (hexagon_side * 3)
+                x = (hexagon_size * 1.5) + j * (hexagon_size * 3)
             
-            hex_map[i].append((j, i, x, y))
+            n = noise((x / noise_loc_mod) * noise_scale, (y / noise_loc_mod) * noise_scale)
+ 
+            # Make custom alterations to the map
+            map_center = (imgw/2, imgh/2)
 
+            distance_from_center = get_distance(x, y, map_center[0], map_center[1])
+
+            gradient_perc = distance_from_center/max_distance
+
+            n -= pow(gradient_perc, 3)
+            n = max(n, 0)
+            
+            n *= noise_max
+            
+            hex_map[i].append((x, y, n, get_tile_type(n)))
+            
+           
+    
+
+    # Draw the map based on tile type
     for r in hex_map:
         for c in r:
-            n = int(noise(c[0] * noise_scale, c[1] * noise_scale) * 150)
-            print(n)
-
-            fill(70, 40, noise(c[0] * noise_scale, c[1] * noise_scale) * 369)
-            draw_hexagon(c[2], c[3], hexagon_side, n)
+            noise_height = c[2]
+            
+            if (c[3] == 'dark_water'):
+                fill(120, 120, 225)
+            elif (c[3] == 'water'):
+                fill(150, 150, 255) # water
+            elif (c[3] == 'sand'):
+                fill(237, 201, 175)
+            elif (c[3] == 'grass'):
+                fill(207, 241, 175)
+            elif (c[3] == 'dark_grass'):
+                fill(167, 201, 135)
+            elif (c[3] == 'rocky'):
+                fill(170, 170, 170)
+            elif (c[3] == 'snowy'):
+                fill(255, 255, 255)
+            
+            if (draw_everything or noise_height > 0):
+                if flat_map:
+                    noise_height = 0
+                    
+                draw_hexagon(c[0], c[1], hexagon_size, noise_height )
     
-    # draw_hexagon(325, 207, 50, 0)
-    # draw_hexagon(250, 164, 50, 0)
-
-    # draw_hexagon(250, 250, 100, 6)
     
-    save('Examples/smooth-blue-' + str(int(random(1000))) + '.png')
+    
+    # Writing data to file (Map data, stats, seed, etc)?
+    # output = createWriter("Data/map.txt")
+    # for mc in hex_map:
+    #     output.print(mc) # Write the datum to the file
+    # output.flush()# Writes the remaining data to the file
+    # output.close()# Finishes the file
+    seed = str(int(random(1000)))
+    
+    save('Examples/Junk/' + seed + '.png')
     
