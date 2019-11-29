@@ -1,3 +1,9 @@
+##############################
+# Created by Eric Davidson
+# https://github.com/erdavids
+##############################
+
+# Width/Height of the image
 imgw, imgh = 2000, 2000
 
 
@@ -30,8 +36,6 @@ snowy_range = (rocky_range[1], noise_max)
 
 # Set this to false when doing a raised map for best results
 draw_everything = False
-
-
 
 def draw_hexagon(x, y, side, h):
     
