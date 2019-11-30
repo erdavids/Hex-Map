@@ -13,6 +13,7 @@ imgw, imgh = 2000, 2000
 hexagon_size = 10
 outline_width = 1
 outline_color = (0, 0, 0)
+custom_stroke = True
 
 #############
 # Noise Variables
@@ -171,7 +172,11 @@ def setup():
             if draw_everything or noise_height > 0:
                 if flat_map:
                     noise_height = 0
-                    
+                if custom_stroke:
+                    # Adding strokes based on the base color looks very nice, and less blocky.
+                    dark_stroke = [min(255, int(x * 0.5)) for x in hex_color]
+                    stroke(dark_stroke[0], dark_stroke[1], dark_stroke[2])
+
                 draw_hexagon(c[0], c[1], hexagon_size, noise_height)
     
     
