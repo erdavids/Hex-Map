@@ -4,7 +4,7 @@ A hexagon based terrain simulator that relies on Perlin noise for the height val
 
 If you're interested in running the code on your own, make sure to download [Processing](https://www.processing.org) and use the Python module to run the .pyde file. Try playing with some of the variables at the top of the script to get a feel for how they affect the terrain generation.
 
-Feel free to email me at thebuffed@gmail.com if you have any questions.
+Feel free to email me at thebuffed@gmail.com with 'Hex Map' in the subject if you have any questions.
 
 Other links:
 - [More Generative Art](https://github.com/erdavids/Generative-Art)
