@@ -4,7 +4,7 @@
 ##############################
 
 # Width/Height of the image
-imgw, imgh = 1000, 2000
+imgw, imgh = 2000, 2000
 
 
 #############
