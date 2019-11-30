@@ -33,6 +33,20 @@ grass_range = (sand_range[1], 40)
 dark_grass_range = (grass_range[1], 60)
 rocky_range = (dark_grass_range[1], 70)
 snowy_range = (rocky_range[1], noise_max)
+ranges =   [0,            10,      20,     25,      40,           60,      70,      noise_max]
+features = ["dark_water", "water", "sand", "grass", "dark_grass", "rocky", "snowy", "dark_water"]
+#############
+# Colors
+#############
+# Using a dictionary allows easily adding new colors.
+colors = {'dark_water': (120, 120, 225),
+         'water': (150, 150, 255),
+         'sand': (237, 201, 175),
+         'grass': (207, 241, 135),
+         'dark_grass': (167, 201, 135),
+         'rocky': (170, 170, 170),
+         'snowy': (255, 255, 255)
+         }
 
 # Set this to false when doing a raised map for best results
 draw_everything = False
@@ -74,31 +88,24 @@ def draw_hexagon(x, y, side, h):
     endShape()
     
 def in_range(n, r):
-    if (n >= r[0] and n < r[1]):
-        return True
-    return False
+    return n >= r[0] and n < r[1]:
 
 # Set tile types based on noise height
-def get_tile_type(n):
-    if (in_range(n, water_range)):
-        return 'water'
-    elif (in_range(n, sand_range)):
-        return 'sand'
-    elif (in_range(n, grass_range)):
-        return 'grass'
-    elif (in_range(n, dark_grass_range)):
-        return 'dark_grass'
-    elif(in_range(n, rocky_range)):
-        return 'rocky'
-    elif(in_range(n, snowy_range)):
-        return 'snowy'
-    else:
-        return 'dark_water'
+def get_tile_type(n): 
+    for i in range(len(ranges)):
+        # For instance, if n is 5:
+        # The first test fails, since 0 < 5
+        # The second test passes, since 10 > 5 - this means 
+        # our number is between 0 and 10, and so it is dark water.
+        # (and we should return index 0)
+        if ranges[i] >= n:
+            return features[i-1]
+    # Default case.
+    return features[-1]
 
 # Returns the distance between tiles
 def get_distance(tile_one_x, tile_one_y, tile_two_x, tile_two_y):
     return sqrt(pow((tile_one_x - tile_two_x), 2) + pow((tile_one_y - tile_two_y), 2))
-    
     
     
 def setup():
@@ -114,7 +121,7 @@ def setup():
     pixelDensity(2)
     
     # Set the border for the hexagon tiles
-    if (outline_width > 0):
+    if outline_width > 0:
         stroke(outline_color[0], outline_color[1], outline_color[2])
         strokeWeight(outline_width)
     else:
@@ -131,9 +138,9 @@ def setup():
     
     # Assign each tile's position, height, and type
     for i in range(map_height):
-        y = i * ((.86 * hexagon_size))
+        y = i * (.86 * hexagon_size)
         for j in range(map_width):
-            if (i%2 == 0):
+            if i%2 == 0:
                 x = j * (hexagon_size * 3)
             else:
                 x = (hexagon_size * 1.5) + j * (hexagon_size * 3)
@@ -154,37 +161,20 @@ def setup():
             
             hex_map[i].append((x, y, n, get_tile_type(n)))
             
-           
-    
 
     # Draw the map based on tile type
     for r in hex_map:
         for c in r:
             noise_height = c[2]
-            
-            if (c[3] == 'dark_water'):
-                fill(120, 120, 225)
-            elif (c[3] == 'water'):
-                fill(150, 150, 255) # water
-            elif (c[3] == 'sand'):
-                fill(237, 201, 175)
-            elif (c[3] == 'grass'):
-                fill(207, 241, 175)
-            elif (c[3] == 'dark_grass'):
-                fill(167, 201, 135)
-            elif (c[3] == 'rocky'):
-                fill(170, 170, 170)
-            elif (c[3] == 'snowy'):
-                fill(255, 255, 255)
-            
-            if (draw_everything or noise_height > 0):
+            hex_color = colors[c[3]]
+            fill(hex_color[0], hex_color[1], hex_color[2])
+            if draw_everything or noise_height > 0:
                 if flat_map:
                     noise_height = 0
                     
-                draw_hexagon(c[0], c[1], hexagon_size, noise_height )
+                draw_hexagon(c[0], c[1], hexagon_size, noise_height)
     
     
-    seed = str(int(random(10000)))
+    seed = int(random(10000))
     
-    save('Examples/Best/' + seed + '.png')
-    
+    save('Examples/Best/%s.png' % seed)
