@@ -88,7 +88,7 @@ def draw_hexagon(x, y, side, h):
     endShape()
     
 def in_range(n, r):
-    return n >= r[0] and n < r[1]:
+    return n >= r[0] and n < r[1]
 
 # Set tile types based on noise height
 def get_tile_type(n): 
