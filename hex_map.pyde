@@ -1,10 +1,13 @@
 ##############################
 # Created by Eric Davidson
 # https://github.com/erdavids
+#
+# Additional Contributions:
+# https://github.com/philippeitis
 ##############################
 
 # Width/Height of the image
-imgw, imgh = 2000, 2000
+imgw, imgh = 1000, 1000
 
 
 #############
@@ -28,7 +31,7 @@ max_distance = 0.55 * min(imgw, imgh)
 # Map Variables
 #############
 flat_map = False
-flat_water = True
+flat_water = False
 ranges =   [0,            10,      20,     25,      40,           60,      70,      noise_max]
 features = ["dark_water", "water", "sand", "grass", "dark_grass", "rocky", "snowy", "dark_water"]
 #############
