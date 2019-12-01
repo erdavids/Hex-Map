@@ -18,6 +18,7 @@ custom_stroke = True
 #############
 # Noise Variables
 #############
+noise_seed = int(random(2**31))
 noise_loc_mod = 4
 noise_scale = .02
 noise_max = 120
@@ -127,6 +128,8 @@ def setup():
     map_height = int(1.5 * imgh / (.86 * hexagon_size))
     map_width =  int(1.5 * imgw / (hexagon_size * 3))
     
+    noiseSeed(noise_seed)
+
     hex_map = []
     for mh in range(map_height):
         hex_map.append([])
@@ -176,7 +179,6 @@ def setup():
                     noise_height = max(20, noise_height)
       
                 draw_hexagon(c[0], c[1], hexagon_size, noise_height)
-
-    seed = int(random(10000))
     
-    save('Examples/Best/%s.png' % seed)
+    print("SEED USED: %s" % noise_seed)    
+    save('Examples/Best/%s.png' % noise_seed)
