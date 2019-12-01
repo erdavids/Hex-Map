@@ -13,6 +13,7 @@ imgw, imgh = 2000, 2000
 hexagon_size = 10
 outline_width = 1
 outline_color = (0, 0, 0)
+custom_stroke = True
 
 #############
 # Noise Variables
@@ -21,19 +22,13 @@ noise_seed = int(random(2**31))
 noise_loc_mod = 4
 noise_scale = .02
 noise_max = 120
-max_distance = 1100
+max_distance = 0.55 * min(imgw, imgh)
 
 #############
 # Map Variables
 #############
 flat_map = False
-dark_water_range = (0, 10)
-water_range = (11, 20)
-sand_range = (water_range[1], 25)
-grass_range = (sand_range[1], 40)
-dark_grass_range = (grass_range[1], 60)
-rocky_range = (dark_grass_range[1], 70)
-snowy_range = (rocky_range[1], noise_max)
+flat_water = True
 ranges =   [0,            10,      20,     25,      40,           60,      70,      noise_max]
 features = ["dark_water", "water", "sand", "grass", "dark_grass", "rocky", "snowy", "dark_water"]
 #############
@@ -175,6 +170,14 @@ def setup():
                 if flat_map:
                     noise_height = 0
                     
+                if custom_stroke:
+                    # Adding strokes based on the base color looks very nice, and less blocky.
+                    dark_stroke = [min(255, int(x * 0.5)) for x in hex_color]
+                    stroke(dark_stroke[0], dark_stroke[1], dark_stroke[2])
+
+                if flat_water:
+                    noise_height = max(20, noise_height)
+      
                 draw_hexagon(c[0], c[1], hexagon_size, noise_height)
     
     print("SEED USED: %s" % noise_seed)    
