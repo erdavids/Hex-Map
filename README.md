@@ -2,6 +2,10 @@
 
 A hexagon based terrain simulator that relies on Perlin noise for the height values. You can use this tool freely to generate your own maps or upgrade the script to add new functionality.
 
+Use an online version to make your own maps: https://www.erdavids.com/projects/hex-map
+
+Play with the source code yourself: https://glitch.com/~hex-map-creator
+
 If you're interested in running the code on your own, make sure to download [Processing](https://www.processing.org) and use the Python module to run the .pyde file. Try playing with some of the variables at the top of the script to get a feel for how they affect the terrain generation.
 
 Feel free to email me at thebuffed@gmail.com with 'Hex Map' in the subject if you have any questions.
